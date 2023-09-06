@@ -16,9 +16,19 @@
 
 <i> Прим. из-за веса файлов с данными (соответственно сырые и обработанные а также слой витрин) и необходимости их обработки развертывание docker-compose требует большого количества свободной памяти (около 5GB или более)</i>
 
-<b>Работа с данными</b> 
+<b>Рекомендации по развертыванию проекта</b>
 
-<b>version1</b>
+1. Скачайте весь проект (можно исключить папку result и файл README) в локальную директорию.
+
+2. Перейдите по ссылке в [файле README](https://github.com/PolarJaba/DE_final_project/blob/main/init_db/data/README.md) и скачайте файл сырых данных yellow_tripdata в папку init_db/data.
+
+3. В коммандной строке перейдите в директорию, в которую загрузили проект и введите команду:
+
+```
+docker-compose up
+```
+
+<b>Работа с данными</b> 
 
 Осуществляется в несколько этапов:
 
@@ -44,7 +54,7 @@
 
 <b>Структура проекта</b>
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/structure.PNG)
+![image](https://github.com/PolarJaba/DE_final_project/blob/main/result/figs/structure.PNG)
 
 <i>Прим. разделы figs и results не используются для работы docker-compose и необходимы только для демонстрации проекта</i>
 
@@ -54,31 +64,31 @@
 
 RAW:
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/er_raw.PNG)
+![image](https://github.com/PolarJaba/DE_final_project/blob/main/result/figs/er_raw.PNG)
 
 CORE: 
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/er_core.PNG)
+![image](https://github.com/PolarJaba/DE_final_project/blob/main/result/figs/er_core.PNG)
 
 MART:
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/er_mart.PNG)
+![image](https://github.com/PolarJaba/DE_final_project/blob/main/result/figs/er_mart.PNG)
 
 Витрина данных содержит информацию о процентном соотношении поездок такси с различным количеством пассажиров по датам:
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/data_mart.PNG)
+![image](https://github.com/PolarJaba/DE_final_project/blob/main/result/figs/data_mart.PNG)
 
 Также составлена витрина для получения информации о минимальной и максимальной стоимости поездки за день:
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/min_max_cost_dm.PNG)
+![image](https://github.com/PolarJaba/DE_final_project/blob/main/result/figs/min_max_cost_dm.PNG)
 
 <b>Попытка ответа на дополнительный вопрос</b>
 
-Скрипт [data_analysis](https://github.com/PolarJaba/DE_final/blob/main/app/scripts/data_analysis.py) (не инициализируется docker-compose) содержит программу для построения графика рассеяния, отвечающего на вопрос "Как количество пассажиров и дальность поездки влияют на чаевые?".
+Скрипт [data_analysis](https://github.com/PolarJaba/DE_final_project/blob/main/app/scripts/data_analysis.py) (не инициализируется docker-compose) содержит программу для построения графика рассеяния, отвечающего на вопрос "Как количество пассажиров и дальность поездки влияют на чаевые?".
 
 Получен график:
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/result/app/scripts/scatter_plot_1-2.png)
+![image](https://github.com/PolarJaba/DE_final_project/blob/main/result/figs/scatter_plot_1-2.png)
 
 <b>Выводы:</b>
 
