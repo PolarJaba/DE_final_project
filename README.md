@@ -14,36 +14,37 @@
 
 Рассматривалась также возможность использвания hdfs, однако объем исходного файла небольшой (0,5 Гб) и формат данных столбцов определен достаточно точно из-за чего использование такого инструмента скорее излишне.
 
-Проект представлен в двух вариантах: version1 (рабочий), version2 (~~теоретически~~ рабочий), принципиальных отличий нет, различается работа с данными core-слоя. В первой версии необходимо предварительно обработать данные для core-слоя и поместить их в нужную директорию, во второй -
-весь процесс обработки и загрузки данных в БД происходит автоматически (требует большого объема свободной памяти).
-
-<i> Прим. из-за веса файлов с данными (соответственно сырые и обработанные а также слой витрин) и необходимости их обработки развертывание docker-compose требует большого количества свободной памяти (около 3GB или более)</i>
+<i> Прим. из-за веса файлов с данными (соответственно сырые и обработанные а также слой витрин) и необходимости их обработки развертывание docker-compose требует большого количества свободной памяти (около 5GB или более)</i>
 
 <b>Работа с данными</b> 
 
 <b>version1</b>
 
-1. Требуеся предварительная подготовка файла с очищенными данными. Необходимо запустить скрипт [dataframe_processing](https://github.com/PolarJaba/DE_final/blob/main/version1/app/scripts/dataframe_processing.py) и поместить полученный файл в папку init_db/data. Здесь производится преобразование формата, проверка на существование всех необходимых значений строки, их адекватность.
+Осуществляется в несколько этапов:
 
-2. При запуске docker-compose происходит загрузка данных в БД Postgres и создние витрины данных, а также ее выгрузка в формате parquet в отдельную директорию внутри контейнера.
+Скрипт [main](https://github.com/PolarJaba/DE_final_project/blob/main/app/scripts/main.py)
 
-<b>version2</b>
+  1. Загрузка данных из файла yellow_tripdata в слой сырых данных без каких-либо изменений.
 
-Работа осуществляется в несколько этапов:
+  2. Получение части данных путем запроса к БД, их очистка от пустых и явно ошибочных значений (например отрицательных значений пройденного пути).
 
-1. Загрузка данных из файла yellow_tripdata в слой сырых данных без каких-либо изменений.
+  3. Загрузка данных в core-слой.
 
-2. Получение части данных путем запроса к БД, для опимизации работы запрашиваются только отдельные столбцы, производится проверка на адекватность значений (например, расстояние или конечная стоимость путешествия не могут быть отрицательными величинами).
+Скрипт [queries](https://github.com/PolarJaba/DE_final_project/blob/main/app/scripts/queries.py)
 
-3. Преобразование полученных даннных в dataframe, конечная очистка.
+  1. Создание витрины данных о соотношении количества поездок с различным количеством пассажиров в различные дни.
 
-4. Загрузка данных в core-слой.
+  2. Создание витрины данных о максимальном и минимальном значении полной стоимости поездки такси с различным количеством пассажиров в различные дни.
 
-5. Создание и заполнение витрины данных путем запроса к БД.
+  Заполнение витрин происходит через запрос к БД.
+
+Скрипт [data_load](https://github.com/PolarJaba/DE_final_project/blob/main/app/scripts/data_load.py)
+
+  1. Выгрузка витрин из БД в формат parquet.
 
 <b>Структура проекта</b>
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/version1/figs/structure.PNG)
+![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/structure.PNG)
 
 <i>Прим. разделы figs и results не используются для работы docker-compose и необходимы только для демонстрации проекта</i>
 
@@ -53,31 +54,31 @@
 
 RAW:
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/version1/figs/er_raw.PNG)
+![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/er_raw.PNG)
 
 CORE: 
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/version1/figs/er_core.PNG)
+![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/er_core.PNG)
 
 MART:
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/version1/figs/er_mart.PNG)
+![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/er_mart.PNG)
 
 Витрина данных содержит информацию о процентном соотношении поездок такси с различным количеством пассажиров по датам:
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/version1/figs/data_mart.PNG)
+![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/data_mart.PNG)
 
 Также составлена витрина для получения информации о минимальной и максимальной стоимости поездки за день:
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/version1/figs/min_max_cost_dm.PNG)
+![image](https://github.com/PolarJaba/DE_final/blob/main/result/figs/min_max_cost_dm.PNG)
 
 <b>Попытка ответа на дополнительный вопрос</b>
 
-Скрипт [data_analysis](https://github.com/PolarJaba/DE_final/blob/main/version1/app/scripts/data_analysis.py) (не инициализируется docker-compose) содержит программу для построения графика рассеяния, отвечающего на вопрос "Как количество пассажиров и дальность поездки влияют на чаевые?".
+Скрипт [data_analysis](https://github.com/PolarJaba/DE_final/blob/main/app/scripts/data_analysis.py) (не инициализируется docker-compose) содержит программу для построения графика рассеяния, отвечающего на вопрос "Как количество пассажиров и дальность поездки влияют на чаевые?".
 
 Получен график:
 
-![image](https://github.com/PolarJaba/DE_final/blob/main/version1/app/scripts/scatter_plot_1-2.png)
+![image](https://github.com/PolarJaba/DE_final/blob/main/result/app/scripts/scatter_plot_1-2.png)
 
 <b>Выводы:</b>
 
